@@ -1,4 +1,4 @@
-// WebRTC Simple Peer Example — Collective Heart
+// WebRTC Simple Peer Example — Collective Heart by Fernando Gregório & Name Atchareeya Jattuporn
 // reference : WebRTC-Simple-Peer-Examples by Lisa Jamhoury
 // https://github.com/lisajamhoury/WebRTC-Simple-Peer-Examples
 //
