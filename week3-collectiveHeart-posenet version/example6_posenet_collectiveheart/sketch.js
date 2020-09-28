@@ -1,4 +1,4 @@
-// WebRTC Simple Peer Example — Collective Heart by Fernando Gregório & Name Atchareeya Jattuporn
+// WebRTC Simple Peer Example — Collective Heart
 // reference : WebRTC-Simple-Peer-Examples by Lisa Jamhoury
 // https://github.com/lisajamhoury/WebRTC-Simple-Peer-Examples
 //
@@ -233,11 +233,11 @@ function setup() {
 
   // Start socket client automatically on load
   // By default it connects to http://localhost:80
-  WebRTCPeerClient.initSocketClient();
+  //WebRTCPeerClient.initSocketClient();
 
   // To connect to server remotely pass the ngrok address
   // See https://github.com/lisajamhoury/WebRTC-Simple-Peer-Examples#to-run-signal-server-online-with-ngrok
-  //  WebRTCPeerClient.initSocketClient('https://e1d9911c13b9.ngrok.io');
+   WebRTCPeerClient.initSocketClient('https://3b493983c905.ngrok.io');
 
   // Start the peer client
   WebRTCPeerClient.initPeerClient();
@@ -289,6 +289,7 @@ function draw() {
   if (partnerPose === null) {
     // Return and try again for partner pose
     console.log('waiting for partner');
+    text('wait for the connection', width/2,height/2);
     return;
   }
   // Draw white background
@@ -350,12 +351,14 @@ function draw() {
   if(dist(myHeartX,myHeartY,partnerHeartX,partnerHeartY)< 50){
     beating();
   }else{
-    return;
+    myHeartSize = oriMyHeartSize;
+    partnerHeartSize = oriPartnerHeartSize;
+
   }
 
 
   // If the poses are touching
-  if (touching) {
+  if (touching){
     // Combine the poses
     const combinedPoses = combinePoses(
       myOrderedPose,
@@ -375,13 +378,13 @@ function draw() {
 
     noStroke();
     fill(avgCol.r,avgCol.g,avgCol.b,50);
-
     // Draw the combined body
     drawCurvedBody(cleanCombinedPose);
 
 
     // If the poses are not touching
-  } else {
+  } else if(!touching) {
+    console.log('touching  ' + touching);
     // Remove any keypoints that are not used
     const cleanedMyPose = removeUnusedKeypoints(myOrderedPose);
     const cleanedPartnerPose = removeUnusedKeypoints(
@@ -389,12 +392,11 @@ function draw() {
     );
     //color of each player's stroke come from the color picker
     noFill();
+    // strokeWeight(2);
     // Draw my pose and my partner pose as curved shapes
-    stroke(myColor.levels[0],myColor.levels[1],myColor.levels[2],50);
-    drawCurvedBody(cleanedMyPose);
-    stroke(partnerCol.levels[0],partnerCol.levels[1] , partnerCol.levels[2],50);
-    drawCurvedBody(cleanedPartnerPose);
-
+    // stroke();
+    drawCurvedBody(cleanedMyPose,myColor.levels[0],myColor.levels[1],myColor.levels[2]);
+    drawCurvedBody(cleanedPartnerPose,partnerCol.levels[0],partnerCol.levels[1] , partnerCol.levels[2]);
 
   }
 
@@ -413,7 +415,7 @@ function stateOne(){
   fill(0);
   textAlign(CENTER);
   textSize(30);
-  text("How is your heart today", width/2, (height/2)-150);
+  text("How is your heart today ?", width/2, (height/2)-150);
   cp.show();
   butt.show();
   butt2.hide();
@@ -611,14 +613,13 @@ function combinePoses(pose1, pose2, edges1, edges2) {
 }
 
 // Draw a curved shape with the posenet points
-function drawCurvedBody(pose) {
+function drawCurvedBody(pose,r,g,b) {
   // Make sure we have points in the pose array
   if (pose.length === 0) return;
-
+  stroke(r,g,b);
   // Begin drawing the shape
   // See p5 reference https://p5js.org/reference/#/p5/beginShape
   beginShape();
-
   // Go through all of the keypoints in the array
   // Add 3 extra points to complete the curved shaped
   for (let i = 0; i < pose.length + 3; i++) {
